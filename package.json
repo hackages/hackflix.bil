@@ -1,0 +1,32 @@
+{
+  "name": "hackcamp.react",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta",
+    "classnames": "^2.2.6",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "eslint-plugin-react": "^7.9.1",
+    "prettier": "^1.13.3",
+    "react-scripts": "2.1.8"
+  },
+  "scripts": {
+    "lint": "node_modules/eslint/bin/eslint.js src/App.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
