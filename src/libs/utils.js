@@ -45,3 +45,23 @@ export const filterByCategory = (movie, categoryName) =>
 
 export const filterByTitle = (movie, title) =>
   movie.title.toLowerCase().includes(title.toLowerCase());
+
+export const selectCatgory = (categoryName, categories) => {
+  // We need to update the `selected` property of the clicked category to be true.
+  // We should also filter the movies which are passed to the movie list
+  return categories.map(category => ({
+    ...category,
+    selected: category.name === categoryName
+  }));
+};
+
+export const fitlerMovies = (state, movies) => {
+  const { selectedCategoryName, searchTerm } = state;
+
+  return movies.filter(movie => {
+    return (
+      filterByCategory(movie, selectedCategoryName) &&
+      filterByTitle(movie, searchTerm)
+    );
+  });
+};

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Components
 import { Header, Menu, MovieList, MovieDetail, SideBar } from './components';
@@ -11,10 +11,10 @@ import logo from './images/hackflix_logo.svg';
 import './css/Header.css';
 
 // Helper functions
-import { filterByCategory, filterByTitle } from './libs/utils';
+import { fitlerMovies, selectCatgory } from './libs/utils';
 
-export class App extends Component {
-  state = {
+export function App() {
+  const initialState = {
     movies: mockMovies,
     categories: mockCategories,
     toggled: false,
@@ -23,77 +23,68 @@ export class App extends Component {
     searchTerm: ''
   };
 
-  selectTab = categoryName => {
-    // We need to update the `selected` property of the clicked category to be true.
-    // We should also filter the movies which are passed to the movie list
-    const categories = mockCategories.map(category => ({
-      ...category,
-      selected: category.name === categoryName
-    }));
+  const [state, setState] = useState(initialState);
 
-    this.setState({ categories, selectedCategoryName: categoryName }, () => {
-      this.fitlermMovies();
-    });
-  };
+  useEffect(
+    () => {
+      setState({
+        ...state,
+        movies: fitlerMovies(state, mockMovies)
+      });
+    },
+    [state.searchTerm, state.selectedCategoryName]
+  );
 
-  fitlermMovies = () => {
-    const { selectedCategoryName, searchTerm } = this.state;
-
-    const movies = mockMovies.filter(movie => {
-      return (
-        filterByCategory(movie, selectedCategoryName) &&
-        filterByTitle(movie, searchTerm)
-      );
-    });
-
-    this.setState({ movies });
-  };
-
-  toggleSideBar = () => {
+  const toggleSideBar = () => {
     // We need to toggle the state of the sidebar here
-    this.setState({ toggled: !this.state.toggled });
+    setState({ ...state, toggled: !state.toggled });
   };
 
-  search = event => {
-    this.setState({ searchTerm: event.target.value }, () => {
-      this.fitlermMovies();
+  const selectTab = categoryName => {
+    setState({
+      ...state,
+      selectedCategoryName: categoryName,
+      categories: selectCatgory(categoryName, categories)
     });
   };
 
-  selectMovie = movie => {
-    this.setState({ selectedMovie: movie });
+  const search = event => {
+    setState({ ...state, searchTerm: event.target.value });
   };
 
-  render() {
-    const { movies, categories, toggled, selectedMovie } = this.state;
-    return (
-      <>
-        <Header logo={logo} />
+  const selectMovie = movie => {
+    setState({ ...state, selectedMovie: movie });
+  };
 
-        {selectedMovie ? (
-          <MovieDetail movie={selectedMovie} selectMovie={this.selectMovie} />
-        ) : (
-          <>
-            <main className="main-content">
-              <Menu
-                items={categories}
-                counter={movies.length}
-                selectTab={this.selectTab}
-              />
-              <MovieList
-                movies={movies}
-                toggled={toggled}
-                selectMovie={this.selectMovie}
-              />
-              <SideBar
-                toggled={toggled}
-                toggleSideBar={this.toggleSideBar}
-                search={this.search}
-              />
-            </main>
-          </>
-        )}
-      </>
-    );
-  }
+  const { movies, categories, toggled, selectedMovie } = state;
+
+  return (
+    <>
+      <Header logo={logo} />
+
+      {selectedMovie ? (
+        <MovieDetail movie={selectedMovie} selectMovie={selectMovie} />
+      ) : (
+        <>
+          <main className="main-content">
+            <Menu
+              items={categories}
+              counter={movies.length}
+              selectTab={selectTab}
+            />
+            <MovieList
+              movies={movies}
+              toggled={toggled}
+              selectMovie={selectMovie}
+            />
+            <SideBar
+              toggled={toggled}
+              toggleSideBar={toggleSideBar}
+              search={search}
+            />
+          </main>
+        </>
+      )}
+    </>
+  );
 }
